@@ -29,15 +29,16 @@
                     IsEnabled="{Binding CanProceed}" Margin="10"/>
             <Button Content="Очистити" Command="{Binding ClearCommand}" Margin="10"/>
 
-            <TextBlock Text="{Binding SunSign}" FontWeight="Bold" Foreground="Blue" />
-            <TextBlock Text="{Binding ChineseSign}" FontWeight="Bold" Foreground="Green" />
-            <TextBlock Text="{Binding AgeStatus}" FontWeight="Bold" Foreground="Red" />
-            <TextBlock Text="{Binding BirthdayMessage}" FontWeight="Bold" Foreground="Purple" />
+            <TextBlock Text="{Binding SunSign}" FontWeight="Bold" Foreground="#6C9C85" />
+            <TextBlock Text="{Binding ChineseSign}" FontWeight="Bold" Foreground="#6D6E9C" />
+            <TextBlock Text="{Binding AgeStatus}" FontWeight="Bold" Foreground="#BD4A37" />
+            <TextBlock Text="{Binding BirthdayMessage}" FontWeight="Bold" Foreground="#C25A6B" />
+
+
         </StackPanel>
+        <!-- Картинка -->
         <Image Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" 
                Width="94" Height="367"
                Source="flower.png" />
-
-        <!-- Додаємо картинку праворуч -->
     </Grid>
 </Window>

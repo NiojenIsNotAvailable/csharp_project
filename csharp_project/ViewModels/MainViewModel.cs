@@ -115,6 +115,40 @@ namespace csharp_project.ViewModels
             }
         }
 
+        private int CalculateAge(DateTime? birthDate)
+        {
+            if (!birthDate.HasValue)
+                return 0;
+
+            int age = DateTime.Today.Year - birthDate.Value.Year;
+            if (birthDate.Value.Date > DateTime.Today.AddYears(-age))
+            {
+                age--; // Якщо ще не було дня народження в цьому році
+            }
+            return age;
+        }
+
+
+        private async Task ProceedAsync()
+        {
+            IsProcessing = true;
+
+            try
+            {
+
+                var person = new Person(FirstName, LastName, Email, BirthDate);
+
+                SunSign = $"Знак Зодіаку: {person.SunSign}";
+                ChineseSign = $"Китайський знак: {person.ChineseSign}";
+                AgeStatus = $"Статус: {(person.IsAdult ? "Дорослий" : "Неповнолітній")} ({CalculateAge(person.BirthDate)})";
+                BirthdayMessage = person.IsBirthday ? "🎉 З Днем Народження! 🎉" : "";
+            }
+            finally
+            {
+                IsProcessing = false;
+            }
+        }
+
         public bool IsProcessing
         {
             get => _isProcessing;
@@ -130,26 +164,11 @@ namespace csharp_project.ViewModels
 
         public MainViewModel()
         {
-            ProceedCommand = new CommandHandler(async () => await LoadPersonDataAsync(), () => CanProceed);
+            ProceedCommand = new CommandHandler(async () => await ProceedAsync(), () => CanProceed);
+
             ClearCommand = new CommandHandler(ClearFields);
         }
 
-        private async Task LoadPersonDataAsync()
-        {
-            if (!CanProceed) return;
-
-            IsProcessing = true;
-            await Task.Delay(1000); // Симуляція затримки
-
-            var person = new Person(FirstName, LastName, Email, BirthDate);
-
-            SunSign = person.SunSign;
-            ChineseSign = person.ChineseSign;
-            AgeStatus = person.IsAdult ? "Дорослий" : "Неповнолітній";
-            BirthdayMessage = person.IsBirthday ? "З Днем народження! 🎉" : string.Empty;
-
-            IsProcessing = false;
-        }
 
         private void ClearFields()
         {
