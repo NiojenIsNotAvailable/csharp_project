@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using csharp_project.Models;
 
 namespace csharp_project.Models
 {
@@ -10,9 +8,9 @@ namespace csharp_project.Models
         public string FirstName { get; }
         public string LastName { get; }
         public string Email { get; }
-        public DateTime? BirthDate { get; }
+        public DateTime BirthDate { get; }
 
-        // Поля для кешування значень
+        // Попередньо обчислені значення
         private readonly bool _isAdult;
         private readonly string _sunSign;
         private readonly string _chineseSign;
@@ -21,19 +19,27 @@ namespace csharp_project.Models
         // Конструктор з усіма параметрами
         public Person(string firstName, string lastName, string email, DateTime? birthDate)
         {
+            if (!birthDate.HasValue)
+                throw new ArgumentNullException(nameof(birthDate));
+
+            if (birthDate > DateTime.Today)
+                throw new FutureBirthDateException();
+
+            if (birthDate < DateTime.Today.AddYears(-135))
+                throw new TooOldBirthDateException();
+
+            if (!IsValidEmail(email))
+                throw new InvalidEmailException();
+
             FirstName = firstName;
             LastName = lastName;
             Email = email;
-            BirthDate = birthDate;
+            BirthDate = birthDate.Value;
 
-            // Попередньо обчислені значення
-            if (birthDate.HasValue)
-            {
-                _isAdult = CalculateIsAdult(birthDate.Value);
-                _sunSign = Zodiac.GetZodiac(birthDate);
-                _chineseSign = Zodiac.GetChineseZodiac(birthDate);
-                _isBirthday = CheckIsBirthday(birthDate.Value);
-            }
+            _isAdult = CalculateIsAdult(BirthDate);
+            _sunSign = Zodiac.GetZodiac(BirthDate);
+            _chineseSign = Zodiac.GetChineseZodiac(BirthDate);
+            _isBirthday = CheckIsBirthday(BirthDate);
         }
 
         // Конструктор без дати народження
@@ -44,11 +50,24 @@ namespace csharp_project.Models
         public Person(string firstName, string lastName, DateTime? birthDate)
             : this(firstName, lastName, string.Empty, birthDate) { }
 
+        // Перевірка email
+        private bool IsValidEmail(string email)
+        {
+            return !string.IsNullOrWhiteSpace(email) &&
+                   email.Contains('@') &&
+                   email.IndexOf('@') > 0 &&
+                   email.IndexOf('@') < email.Length - 1;
+        }
+
         // Властивості лише для читання
         public bool IsAdult => _isAdult;
         public string SunSign => _sunSign;
         public string ChineseSign => _chineseSign;
         public bool IsBirthday => _isBirthday;
+
+        // Вік
+        public int Age => DateTime.Today.Year - BirthDate.Year -
+                          (DateTime.Today.DayOfYear < BirthDate.DayOfYear ? 1 : 0);
 
         // Методи обчислення
         private static bool CalculateIsAdult(DateTime birthDate)

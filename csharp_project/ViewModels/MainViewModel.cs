@@ -135,7 +135,6 @@ namespace csharp_project.ViewModels
 
             try
             {
-
                 var person = new Person(FirstName, LastName, Email, BirthDate);
 
                 SunSign = $"Знак Зодіаку: {person.SunSign}";
@@ -143,11 +142,33 @@ namespace csharp_project.ViewModels
                 AgeStatus = $"Статус: {(person.IsAdult ? "Дорослий" : "Неповнолітній")} ({CalculateAge(person.BirthDate)})";
                 BirthdayMessage = person.IsBirthday ? "🎉 З Днем Народження! 🎉" : "";
             }
+            catch (FutureBirthDateException ex)
+            {
+                AgeStatus = ex.Message;
+                SunSign = ChineseSign = BirthdayMessage = string.Empty;
+            }
+            catch (TooOldBirthDateException ex)
+            {
+                AgeStatus = ex.Message;
+                SunSign = ChineseSign = BirthdayMessage = string.Empty;
+            }
+            catch (InvalidEmailException ex)
+            {
+                AgeStatus = ex.Message;
+                SunSign = ChineseSign = BirthdayMessage = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                AgeStatus = $"Невідома помилка: {ex.Message}";
+                SunSign = ChineseSign = BirthdayMessage = string.Empty;
+            }
             finally
             {
                 IsProcessing = false;
             }
         }
+
+
 
         public bool IsProcessing
         {
