@@ -58,20 +58,9 @@ namespace csharp_project.ViewModels
             get => _birthDate;
             set
             {
-                if (value.HasValue && (value > DateTime.Today || value < DateTime.Today.AddYears(-135)))
-                {
-                    _birthDate = null;
-                    AgeStatus = "Некоректна дата";
-                    SunSign = string.Empty;
-                    ChineseSign = string.Empty;
-                    BirthdayMessage = string.Empty;
-                }
-                else
-                {
-                    _birthDate = value;
-                    OnPropertyChanged(nameof(BirthDate));
-                    ValidateProceedButton();
-                }
+                _birthDate = value;
+                OnPropertyChanged(nameof(BirthDate));
+                ValidateProceedButton();
             }
         }
 
